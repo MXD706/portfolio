@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kevin - 开发者 | 创造者</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #00ff88; --secondary: #00d4ff; --bg: #0a0a0a; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
+        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
+        nav { position: fixed; top: 0; width: 100%; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent); }
+        nav .logo { font-size: 1.6rem; font-weight: bold; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        nav ul { display: flex; list-style: none; gap: 35px; }
+        nav a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+        nav a:hover, nav a.active { color: var(--primary); }
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; }
+        .hero h1 { font-size: clamp(3rem,10vw,8rem); font-weight: 900; margin-bottom: 20px; }
+        .hero h1 span { display: inline-block; background: linear-gradient(135deg, #fff 0%, var(--primary) 50%, var(--secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: reveal 1s ease-out forwards; opacity: 0; transform: translateY(30px); }
+        .hero h1 span:nth-child(1) { animation-delay: 0.1s; }
+        .hero h1 span:nth-child(2) { animation-delay: 0.2s; }
+        .hero h1 span:nth-child(3) { animation-delay: 0.3s; }
+        .hero h1 span:nth-child(4) { animation-delay: 0.4s; }
+        .hero h1 span:nth-child(5) { animation-delay: 0.5s; }
+        @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+        .hero .subtitle { font-size: clamp(1rem,2.5vw,1.4rem); color: rgba(255,255,255,0.5); margin-bottom: 40px; }
+        .typing-text { color: var(--primary); font-size: 1.1rem; margin-bottom: 50px; }
+        .stats { display: flex; gap: 60px; }
+        .stat { text-align: center; }
+        .stat-number { font-size: 2.5rem; font-weight: bold; color: var(--primary); }
+        .stat-label { font-size: 0.9rem; color: rgba(255,255,255,0.4); margin-top: 5px; }
+        .btn { display: inline-block; padding: 15px 35px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #000; text-decoration: none; border-radius: 30px; font-weight: 600; transition: 0.3s; margin: 5px; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,255,136,0.3); }
+        .section { padding: 100px 50px; max-width: 1200px; margin: 0 auto; }
+        .section-title { font-size: 2.5rem; text-align: center; margin-bottom: 50px; font-weight: 700; }
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 25px; }
+        .project-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 30px; transition: 0.4s; position: relative; overflow: hidden; }
+        .project-card:hover { transform: translateY(-8px); border-color: rgba(0,255,136,0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--primary), transparent); opacity: 0; transition: 0.3s; }
+        .project-card:hover::before { opacity: 1; }
+        .project-card h3 { font-size: 1.3rem; margin-bottom: 10px; }
+        .project-card p { color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 15px; }
+        .project-card .folder { font-size: 0.85rem; color: rgba(255,255,255,0.3); margin-bottom: 15px; }
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { padding: 4px 12px; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.2); border-radius: 20px; font-size: 0.75rem; color: var(--primary); }
+        footer { text-align: center; padding: 50px; color: rgba(255,255,255,0.25); border-top: 1px solid rgba(255,255,255,0.05); margin-top: 50px; }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .project-icon { font-size: 2.5rem; margin-bottom: 15px; animation: float 3s ease-in-out infinite; }
+        @media (max-width: 768px) { nav { padding: 15px 20px; } nav ul { gap: 20px; } .section { padding: 80px 20px; } .stats { gap: 30px; } }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <nav>
+        <div class="logo">KEVIN</div>
+        <ul>
+            <li><a href="index.html" class="active">首页</a></li>
+            <li><a href="projects.html">项目</a></li>
+            <li><a href="about.html">关于</a></li>
+        </ul>
+    </nav>
+    <section class="hero">
+        <h1><span>K</span><span>E</span><span>V</span><span>I</span><span>N</span></h1>
+        <p class="subtitle">开发者 | 创造者 | 学习者</p>
+        <p class="typing-text" id="typing"></p>
+        <div class="stats">
+            <div class="stat"><div class="stat-number">20+</div><div class="stat-label">项目数量</div></div>
+            <div class="stat"><div class="stat-number">6</div><div class="stat-label">分类</div></div>
+            <div class="stat"><div class="stat-number">AI</div><div class="stat-label">主攻方向</div></div>
+        </div>
+        <div style="margin-top: 50px;">
+            <a href="projects.html" class="btn">查看项目 →</a>
+            <a href="about.html" class="btn" style="background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #fff;">了解更多</a>
+        </div>
+    </section>
+    <footer><p>© 2025 Kevin. All rights reserved.</p></footer>
+    <script>
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        class Particle {
+            constructor() { this.reset(); }
+            reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.vx = (Math.random() - 0.5) * 1; this.vy = (Math.random() - 0.5) * 1; this.size = Math.random() * 2 + 1; this.opacity = Math.random() * 0.5 + 0.2; }
+            update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset(); }
+            draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(0, 255, 136, ${this.opacity})`; ctx.fill(); }
+        }
+        const particles = [];
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+        animate();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        const texts = ['开发者', '创造者', '学习者'];
+        let textIdx = 0, charIdx = 0, isDel = false;
+        const typing = document.getElementById('typing');
+        function type() {
+            const t = texts[textIdx];
+            if (isDel) { typing.textContent = t.substring(0, charIdx - 1); charIdx--; } else { typing.textContent = t.substring(0, charIdx + 1); charIdx++; }
+            let speed = isDel ? 30 : 100;
+            if (!isDel && charIdx === t.length) { speed = 2000; isDel = true; }
+            else if (isDel && charIdx === 0) { isDel = false; textIdx = (textIdx + 1) % texts.length; speed = 500; }
+            setTimeout(type, speed);
+        }
+        setTimeout(type, 1000);
+    </script>
+</body>
+</html>

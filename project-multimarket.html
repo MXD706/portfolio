@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多市场扩展 - Kevin的项目</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #00ff88; --secondary: #00d4ff; --bg: #0a0a0a; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; }
+        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; }
+        nav { position: fixed; top: 0; width: 100%; padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; z-index: 100; background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent); }
+        nav .logo { font-size: 1.6rem; font-weight: bold; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        nav ul { display: flex; list-style: none; gap: 35px; }
+        nav a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; transition: 0.3s; }
+        nav a:hover { color: var(--primary); }
+        .back-link { display: inline-flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.5); text-decoration: none; margin: 30px 50px; transition: 0.3s; }
+        .back-link:hover { color: var(--primary); }
+        .project-detail { max-width: 900px; margin: 0 auto; padding: 0 50px 100px; }
+        .project-icon { font-size: 4rem; margin-bottom: 30px; }
+        .project-title { font-size: 2.5rem; margin-bottom: 15px; }
+        .project-folder { color: rgba(255,255,255,0.4); font-size: 1rem; margin-bottom: 30px; }
+        .project-desc { font-size: 1.15rem; line-height: 1.9; color: rgba(255,255,255,0.7); margin-bottom: 40px; }
+        .section-title { font-size: 1.3rem; color: var(--primary); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(0,255,136,0.2); }
+        .features-list { list-style: none; margin-bottom: 40px; }
+        .features-list li { padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: flex-start; gap: 15px; color: rgba(255,255,255,0.7); }
+        .features-list li::before { content: '✓'; color: var(--primary); font-weight: bold; }
+        .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; }
+        .tag { padding: 8px 18px; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.2); border-radius: 20px; font-size: 0.9rem; color: var(--primary); }
+        footer { text-align: center; padding: 50px; color: rgba(255,255,255,0.25); border-top: 1px solid rgba(255,255,255,0.05); }
+        @media (max-width: 768px) { nav { padding: 15px 20px; } .back-link { margin: 20px; } .project-detail { padding: 0 20px 60px; } }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <nav>
+        <div class="logo">KEVIN</div>
+        <ul>
+            <li><a href="index.html">首页</a></li>
+            <li><a href="projects.html">项目</a></li>
+            <li><a href="about.html">关于</a></li>
+        </ul>
+    </nav>
+    <a href="projects.html" class="back-link">← 返回项目列表</a>
+    <div class="project-detail">
+        <div class="project-icon">📊</div>
+        <h1 class="project-title">多市场扩展模块</h1>
+        <p class="project-folder">TradingAgents_Add_Markets</p>
+        <p class="project-desc">为TradingAgents开发的多市场支持扩展模块，让系统能够接入更多的股票市场数据源，增强了系统的通用性和扩展性。支持更多市场的股票分析和数据获取。</p>
+        <h2 class="section-title">主要功能</h2>
+        <ul class="features-list">
+            <li>多市场数据源接入</li>
+            <li>统一的数据处理接口</li>
+            <li>市场对比分析功能</li>
+            <li>自动切换最优数据源</li>
+            <li>新增台股、日股支持</li>
+        </ul>
+        <h2 class="section-title">技术栈</h2>
+        <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">数据分析</span>
+            <span class="tag">API集成</span>
+            <span class="tag">多市场</span>
+        </div>
+    </div>
+    <footer><p>© 2025 Kevin. All rights reserved.</p></footer>
+    <script>
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        class Particle {
+            constructor() { this.reset(); }
+            reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.vx = (Math.random() - 0.5) * 1; this.vy = (Math.random() - 0.5) * 1; this.size = Math.random() * 2 + 1; this.opacity = Math.random() * 0.5 + 0.2; }
+            update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset(); }
+            draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(0, 255, 136, ${this.opacity})`; ctx.fill(); }
+        }
+        const particles = [];
+        for (let i = 0; i < 80; i++) particles.push(new Particle());
+        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+        animate();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+    </script>
+</body>
+</html>
