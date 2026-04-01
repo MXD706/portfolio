@@ -11,8 +11,8 @@ function MatrixRain() {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
     
-    const chars = '凯文张开发者创造者学习者AI'.split('')
-    const fontSize = 16
+    const chars = '凯文张开发者创造者学习者AI全栈'.split('')
+    const fontSize = 14
     const columns = canvas.width / fontSize
     const drops = Array(Math.floor(columns)).fill(1)
     
@@ -42,7 +42,7 @@ function MatrixRain() {
     window.addEventListener('resize', handleResize)
     
     return () => {
-      clearInterval(interval)
+      clearInterval(imation)
       window.removeEventListener('resize', handleResize)
     }
   }, [])
@@ -96,33 +96,18 @@ function TerminalText({ texts, speed = 100 }) {
   )
 }
 
-// Project Card
-function ProjectCard({ name, description, tags, icon }) {
-  return (
-    <div className="project-card">
-      <div className="card-header">
-        <span className="card-icon">{icon}</span>
-        <span className="card-status">
-          <span className="dot"></span> 公开
-        </span>
-      </div>
-      <h3>{name}</h3>
-      <p>{description}</p>
-      <div className="card-tags">
-        {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
-      </div>
-      <div className="card-actions">
-        <a href="#" className="card-link">说明文档</a>
-        <a href="#" className="card-link">在线演示</a>
-      </div>
-    </div>
-  )
-}
-
 // Navigation
 function Nav() {
+  const [scrolled, setScrolled] = useState(false)
+  
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+  
   return (
-    <nav className="nav">
+    <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-logo">
         <span className="logo-bracket">[</span>
         凯文
@@ -130,8 +115,10 @@ function Nav() {
       </div>
       <div className="nav-links">
         <a href="#home" className="nav-link active">~/首页</a>
+        <a href="#skills" className="nav-link">~/技能</a>
         <a href="#projects" className="nav-link">~/项目</a>
         <a href="#about" className="nav-link">~/关于</a>
+        <a href="#contact" className="nav-link">~/联系</a>
       </div>
     </nav>
   )
@@ -157,15 +144,138 @@ function Stats() {
   )
 }
 
+// Skills Section
+function Skills() {
+  const skillCategories = [
+    {
+      name: 'AI / 机器学习',
+      icon: '🤖',
+      skills: ['Python', 'TensorFlow', 'PyTorch', 'LangChain', 'OpenCV', 'Deep-Live-Cam']
+    },
+    {
+      name: '前端开发',
+      icon: '🎨',
+      skills: ['React', 'Vue', 'TypeScript', 'Tailwind CSS', 'Vite', 'Tauri']
+    },
+    {
+      name: '后端开发',
+      icon: '⚙️',
+      skills: ['Node.js', 'Go', 'Rust', 'PostgreSQL', 'Redis', 'Docker']
+    },
+    {
+      name: 'DevOps / 工具',
+      icon: '🔧',
+      skills: ['Git', 'Linux', 'Nginx', 'CI/CD', 'GitHub Actions', 'Shell']
+    },
+  ]
+  
+  return (
+    <section id="skills" className="section">
+      <div className="section-header">
+        <GlitchText tag="h2">技能栈</GlitchText>
+        <p className="section-subtitle">// 技术能力展示</p>
+      </div>
+      <div className="skills-grid">
+        {skillCategories.map(cat => (
+          <div key={cat.name} className="skill-category">
+            <div className="skill-category-header">
+              <span className="skill-icon">{cat.icon}</span>
+              <h3>{cat.name}</h3>
+            </div>
+            <div className="skill-tags">
+              {cat.skills.map(skill => (
+                <span key={skill} className="skill-tag">{skill}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+// Project Card
+function ProjectCard({ name, description, tags, icon, github, demo }) {
+  return (
+    <div className="project-card">
+      <div className="card-header">
+        <span className="card-icon">{icon}</span>
+        <span className="card-status">
+          <span className="dot"></span> 公开
+        </span>
+      </div>
+      <h3>{name}</h3>
+      <p>{description}</p>
+      <div className="card-tags">
+        {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
+      </div>
+      <div className="card-actions">
+        {github && (
+          <a href={github} target="_blank" rel="noopener noreferrer" className="card-link">
+            <span className="link-icon">⌨️</span> 源码
+          </a>
+        )}
+        {demo && (
+          <a href={demo} target="_blank" rel="noopener noreferrer" className="card-link">
+            <span className="link-icon">🚀</span> 演示
+          </a>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // Projects Section
 function Projects() {
   const projects = [
-    { name: 'AI自动学习', description: '基于人工智能的自动化学习系统，帮助提升学习效率', tags: ['Python', 'TensorFlow'], icon: '🤖' },
-    { name: 'OpenClaw面板', description: 'AI Agent 管理面板，黑客风格界面', tags: ['React', 'Tauri'], icon: '🕶️' },
-    { name: '股票分析', description: 'AI驱动的股票分析和自动交易系统', tags: ['Python', 'LangChain'], icon: '📈' },
-    { name: '全栈笔记', description: '现代化的全栈笔记应用，支持多端同步', tags: ['Next.js', 'PostgreSQL'], icon: '📚' },
-    { name: '多市场交易', description: '支持多个交易所的量化交易系统', tags: ['Go', 'API'], icon: '🌐' },
-    { name: '后台管理系统', description: '企业级后台管理解决方案', tags: ['React', 'Node.js'], icon: '⚙️' },
+    {
+      name: 'AI 自动交易系统',
+      description: '基于 AI 的股票分析和自动交易系统，支持多市场数据源',
+      tags: ['Python', 'LangChain', 'TensorFlow'],
+      icon: '📈',
+      github: 'https://github.com/MXD706/TradingAgents-CN',
+      demo: null
+    },
+    {
+      name: 'OpenClaw 控制面板',
+      description: 'AI Agent 管理面板，支持多渠道接入、插件管理、MCP 工具',
+      tags: ['React', 'Tauri', 'TypeScript'],
+      icon: '🕶️',
+      github: 'https://github.com/MXD706/ai007-panel',
+      demo: null
+    },
+    {
+      name: 'Deep Live Cam',
+      description: 'AI 实时换脸工具，支持 GPU 加速和虚拟摄像头输出',
+      tags: ['Python', 'DeepFace', 'CUDA'],
+      icon: '🎭',
+      github: null,
+      demo: null
+    },
+    {
+      name: '个人作品集',
+      description: '展示个人项目和技能的 Hacker 风格作品集网站',
+      tags: ['React', 'Vite', 'CSS'],
+      icon: '🌐',
+      github: 'https://github.com/MXD706/portfolio',
+      demo: 'https://mxd706.github.io/portfolio'
+    },
+    {
+      name: '多市场量化交易',
+      description: '支持多个交易所的量化交易系统，包含策略回测功能',
+      tags: ['Go', 'API', 'Docker'],
+      icon: '🌐',
+      github: null,
+      demo: null
+    },
+    {
+      name: '全栈笔记应用',
+      description: '现代化的全栈笔记应用，支持多端同步和协作功能',
+      tags: ['Next.js', 'PostgreSQL', 'Prisma'],
+      icon: '📚',
+      github: null,
+      demo: null
+    },
   ]
   
   return (
@@ -201,10 +311,16 @@ function About() {
             <p><span className="comment">// 基本信息</span></p>
             <p>{'{'}</p>
             <p>  <span className="property">"姓名"</span>: <span className="string">"凯文"</span>,</p>
-            <p>  <span className="property">"职业"</span>: <span className="string">"全栈开发者"</span>,</p>
+            <p>  <span className="property">"职业"</span>: <span className="string">"全栈开发者 & AI 爱好者"</span>,</p>
             <p>  <span className="property">"位置"</span>: <span className="string">"中国东莞"</span>,</p>
-            <p>  <span className="property">"专注"</span>: <span className="string">"AI与自动化"</span>,</p>
-            <p>  <span className="property">"技能"</span>: [<span className="string">"Python"</span>, <span className="string">"JavaScript"</span>, <span className="string">"Rust"</span>, <span className="string">"Go"</span>]</p>
+            <p>  <span className="property">"专注"</span>: <span className="string">"AI 与自动化"</span>,</p>
+            <p>  <span className="property">"语言"</span>: [<span className="string">"Python"</span>, <span className="string">"JavaScript"</span>, <span className="string">"Rust"</span>, <span className="string">"Go"</span>]</p>
+            <p>{'}'}</p>
+            <p></p>
+            <p><span className="comment">// 当前项目</span></p>
+            <p>{'{'}</p>
+            <p>  <span className="property">"AI股票分析"</span>: <span className="string">"正在开发"</span>,</p>
+            <p>  <span className="property">"自媒体内容创作"</span>: <span className="string">"进行中"</span></p>
             <p>{'}'}</p>
             <p></p>
             <p><span className="comment">// 座右铭</span></p>
@@ -216,10 +332,44 @@ function About() {
   )
 }
 
+// Contact Section
+function Contact() {
+  return (
+    <section id="contact" className="section">
+      <div className="section-header">
+        <GlitchText tag="h2">联系方式</GlitchText>
+        <p className="section-subtitle">// 期待与你的合作</p>
+      </div>
+      <div className="contact-grid">
+        <a href="https://github.com/MXD706" target="_blank" rel="noopener noreferrer" className="contact-card">
+          <span className="contact-icon">🐙</span>
+          <span className="contact-label">GitHub</span>
+          <span className="contact-value">@MXD706</span>
+        </a>
+        <a href="mailto:mxd706@example.com" className="contact-card">
+          <span className="contact-icon">📧</span>
+          <span className="contact-label">邮箱</span>
+          <span className="contact-value">mxd706@example.com</span>
+        </a>
+        <div className="contact-card">
+          <span className="contact-icon">📍</span>
+          <span className="contact-label">位置</span>
+          <span className="contact-value">广东·东莞</span>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // Footer
 function Footer() {
   return (
     <footer className="footer">
+      <div className="footer-links">
+        <a href="https://github.com/MXD706" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <span className="divider">|</span>
+        <a href="#home">回到顶部</a>
+      </div>
       <p>使用 React + Vite 构建</p>
       <p className="copyright">© 2026 凯文. 保留所有权利.</p>
     </footer>
@@ -234,16 +384,18 @@ function App() {
       
       <section id="home" className="hero">
         <GlitchText>凯文</GlitchText>
-        <TerminalText texts={['全栈开发者', 'AI爱好者', '开源贡献者', '正在改变世界']} />
+        <TerminalText texts={['全栈开发者', 'AI 爱好者', '开源贡献者', '正在改变世界']} />
         <Stats />
         <div className="cta-buttons">
           <a href="#projects" className="btn btn-primary">查看项目</a>
-          <a href="#about" className="btn btn-secondary">了解更多</a>
+          <a href="#contact" className="btn btn-secondary">联系我</a>
         </div>
       </section>
       
+      <Skills />
       <Projects />
       <About />
+      <Contact />
       <Footer />
     </div>
   )
