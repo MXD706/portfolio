@@ -5,13 +5,14 @@ import './App.css'
 function MatrixRain() {
   useEffect(() => {
     const canvas = document.getElementById('matrix')
+    if (!canvas) return
     const ctx = canvas.getContext('2d')
     
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
     
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*() Kevin Zhang'.split('')
-    const fontSize = 14
+    const chars = '凯文张开发者创造者学习者AI'.split('')
+    const fontSize = 16
     const columns = canvas.width / fontSize
     const drops = Array(Math.floor(columns)).fill(1)
     
@@ -34,12 +35,16 @@ function MatrixRain() {
     }
     
     const interval = setInterval(draw, 50)
-    window.addEventListener('resize', () => {
+    const handleResize = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
-    })
+    }
+    window.addEventListener('resize', handleResize)
     
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
   
   return <canvas id="matrix" className="matrix-bg" />
@@ -98,7 +103,7 @@ function ProjectCard({ name, description, tags, icon }) {
       <div className="card-header">
         <span className="card-icon">{icon}</span>
         <span className="card-status">
-          <span className="dot"></span> public
+          <span className="dot"></span> 公开
         </span>
       </div>
       <h3>{name}</h3>
@@ -107,8 +112,8 @@ function ProjectCard({ name, description, tags, icon }) {
         {tags.map(tag => <span key={tag} className="tag">{tag}</span>)}
       </div>
       <div className="card-actions">
-        <a href="#" className="card-link">README.md</a>
-        <a href="#" className="card-link">Demo</a>
+        <a href="#" className="card-link">说明文档</a>
+        <a href="#" className="card-link">在线演示</a>
       </div>
     </div>
   )
@@ -120,13 +125,13 @@ function Nav() {
     <nav className="nav">
       <div className="nav-logo">
         <span className="logo-bracket">[</span>
-        KEVIN
+        凯文
         <span className="logo-bracket">]</span>
       </div>
       <div className="nav-links">
-        <a href="#home" className="nav-link active">~/home</a>
-        <a href="#projects" className="nav-link">~/projects</a>
-        <a href="#about" className="nav-link">~/about</a>
+        <a href="#home" className="nav-link active">~/首页</a>
+        <a href="#projects" className="nav-link">~/项目</a>
+        <a href="#about" className="nav-link">~/关于</a>
       </div>
     </nav>
   )
@@ -135,9 +140,9 @@ function Nav() {
 // Stats Counter
 function Stats() {
   const stats = [
-    { number: '20+', label: 'Projects' },
-    { number: '6', label: 'Categories' },
-    { number: 'AI', label: 'Focus' },
+    { number: '20+', label: '项目总数' },
+    { number: '6', label: '技术分类' },
+    { number: 'AI', label: '主攻方向' },
   ]
   
   return (
@@ -155,17 +160,19 @@ function Stats() {
 // Projects Section
 function Projects() {
   const projects = [
-    { name: 'AutoLearning', description: 'AI驱动的自动化学习系统', tags: ['Python', 'TensorFlow'], icon: '🤖' },
-    { name: 'OpenClaw', description: 'AI Agent 管理面板', tags: ['React', 'Tauri'], icon: '🕶️' },
-    { name: 'TradingAgents', description: 'AI股票分析交易系统', tags: ['Python', 'LangChain'], icon: '📈' },
-    { name: 'Moltbook', description: '全栈笔记应用', tags: ['Next.js', 'PostgreSQL'], icon: '📚' },
+    { name: 'AI自动学习', description: '基于人工智能的自动化学习系统，帮助提升学习效率', tags: ['Python', 'TensorFlow'], icon: '🤖' },
+    { name: 'OpenClaw面板', description: 'AI Agent 管理面板，黑客风格界面', tags: ['React', 'Tauri'], icon: '🕶️' },
+    { name: '股票分析', description: 'AI驱动的股票分析和自动交易系统', tags: ['Python', 'LangChain'], icon: '📈' },
+    { name: '全栈笔记', description: '现代化的全栈笔记应用，支持多端同步', tags: ['Next.js', 'PostgreSQL'], icon: '📚' },
+    { name: '多市场交易', description: '支持多个交易所的量化交易系统', tags: ['Go', 'API'], icon: '🌐' },
+    { name: '后台管理系统', description: '企业级后台管理解决方案', tags: ['React', 'Node.js'], icon: '⚙️' },
   ]
   
   return (
     <section id="projects" className="section">
       <div className="section-header">
-        <GlitchText tag="h2">PROJECTS</GlitchText>
-        <p className="section-subtitle">// some of my recent work</p>
+        <GlitchText tag="h2">项目作品</GlitchText>
+        <p className="section-subtitle">// 最近完成的一些项目</p>
       </div>
       <div className="projects-grid">
         {projects.map(p => <ProjectCard key={p.name} {...p} />)}
@@ -179,8 +186,8 @@ function About() {
   return (
     <section id="about" className="section">
       <div className="section-header">
-        <GlitchText tag="h2">ABOUT</GlitchText>
-        <p className="section-subtitle">// who am i</p>
+        <GlitchText tag="h2">关于我</GlitchText>
+        <p className="section-subtitle">// 个人信息</p>
       </div>
       <div className="about-content">
         <div className="terminal-window">
@@ -188,17 +195,20 @@ function About() {
             <span className="terminal-dot red"></span>
             <span className="terminal-dot yellow"></span>
             <span className="terminal-dot green"></span>
-            <span className="terminal-title">about.md</span>
+            <span className="terminal-title">info.json</span>
           </div>
           <div className="terminal-body">
-            <p><span className="comment"># Developer | Creator | Learner</span></p>
-            <p></p>
-            <p><span className="keyword">const</span> <span className="variable">Kevin</span> = {'{'}</p>
-            <p>  <span className="property">role</span>: <span className="string">"Full-Stack Developer"</span>,</p>
-            <p>  <span className="property">focus</span>: <span className="string">"AI & Automation"</span>,</p>
-            <p>  <span className="property">location</span>: <span className="string">"Dongguan, China"</span>,</p>
-            <p>  <span className="property">skills</span>: [<span className="string">"Python"</span>, <span className="string">"JavaScript"</span>, <span className="string">"Rust"</span>, <span className="string">"Go"</span>]</p>
+            <p><span className="comment">// 基本信息</span></p>
+            <p>{'{'}</p>
+            <p>  <span className="property">"姓名"</span>: <span className="string">"凯文"</span>,</p>
+            <p>  <span className="property">"职业"</span>: <span className="string">"全栈开发者"</span>,</p>
+            <p>  <span className="property">"位置"</span>: <span className="string">"中国东莞"</span>,</p>
+            <p>  <span className="property">"专注"</span>: <span className="string">"AI与自动化"</span>,</p>
+            <p>  <span className="property">"技能"</span>: [<span className="string">"Python"</span>, <span className="string">"JavaScript"</span>, <span className="string">"Rust"</span>, <span className="string">"Go"</span>]</p>
             <p>{'}'}</p>
+            <p></p>
+            <p><span className="comment">// 座右铭</span></p>
+            <p><span className="string">"用代码创造未来"</span></p>
           </div>
         </div>
       </div>
@@ -210,8 +220,8 @@ function About() {
 function Footer() {
   return (
     <footer className="footer">
-      <p>Built with React + Vite</p>
-      <p className="copyright">© 2026 Kevin Zhang. All rights reserved.</p>
+      <p>使用 React + Vite 构建</p>
+      <p className="copyright">© 2026 凯文. 保留所有权利.</p>
     </footer>
   )
 }
@@ -223,12 +233,12 @@ function App() {
       <Nav />
       
       <section id="home" className="hero">
-        <GlitchText>K-E-V-I-N</GlitchText>
-        <TerminalText texts={['Full-Stack Developer', 'AI Enthusiast', 'Open Source Contributor', 'Building the future']} />
+        <GlitchText>凯文</GlitchText>
+        <TerminalText texts={['全栈开发者', 'AI爱好者', '开源贡献者', '正在改变世界']} />
         <Stats />
         <div className="cta-buttons">
-          <a href="#projects" className="btn btn-primary">View Projects</a>
-          <a href="#about" className="btn btn-secondary">Learn More</a>
+          <a href="#projects" className="btn btn-primary">查看项目</a>
+          <a href="#about" className="btn btn-secondary">了解更多</a>
         </div>
       </section>
       
