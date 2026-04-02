@@ -1,5 +1,22 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './App.css'
+
+// Custom Cursor
+function CustomCursor() {
+  const cursorRef = useRef(null)
+  
+  useEffect(() => {
+    const moveCursor = (e) => {
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`
+      }
+    }
+    window.addEventListener('mousemove', moveCursor)
+    return () => window.removeEventListener('mousemove', moveCursor)
+  }, [])
+  
+  return <div className="cursor" ref={cursorRef} />
+}
 
 // Matrix Rain Background
 function MatrixRain() {
@@ -11,7 +28,7 @@ function MatrixRain() {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
     
-    const chars = '凯文张开发者创造者学习者AI全栈'.split('')
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*'.split('')
     const fontSize = 14
     const columns = canvas.width / fontSize
     const drops = Array(Math.floor(columns)).fill(1)
@@ -34,7 +51,7 @@ function MatrixRain() {
       }
     }
     
-    const interval = setInterval(draw, 50)
+    const interval = setInterval(draw, 33)
     const handleResize = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
@@ -42,12 +59,29 @@ function MatrixRain() {
     window.addEventListener('resize', handleResize)
     
     return () => {
-      clearInterval(imation)
+      clearInterval(interval)
       window.removeEventListener('resize', handleResize)
     }
   }, [])
   
   return <canvas id="matrix" className="matrix-bg" />
+}
+
+// Scroll Progress Bar
+function ScrollProgress() {
+  const [progress, setProgress] = useState(0)
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      setProgress((scrollTop / docHeight) * 100)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+  
+  return <div className="scroll-progress" style={{ width: `${progress}%` }} />
 }
 
 // Glitch Text Effect
@@ -60,7 +94,7 @@ function GlitchText({ children, tag: Tag = 'h1' }) {
 }
 
 // Terminal Typing Effect
-function TerminalText({ texts, speed = 100 }) {
+function TerminalText({ texts, speed = 80 }) {
   const [displayText, setDisplayText] = useState('')
   const [textIndex, setTextIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -72,7 +106,7 @@ function TerminalText({ texts, speed = 100 }) {
         if (displayText.length < currentText.length) {
           setDisplayText(currentText.slice(0, displayText.length + 1))
         } else {
-          setTimeout(() => setIsDeleting(true), 2000)
+          setTimeout(() => setIsDeleting(true), 1500)
         }
       } else {
         if (displayText.length > 0) {
@@ -92,6 +126,26 @@ function TerminalText({ texts, speed = 100 }) {
       <span className="prompt">$ </span>
       <span className="text">{displayText}</span>
       <span className="cursor">█</span>
+    </div>
+  )
+}
+
+// Easter Egg Counter - Fun element
+function EasterEgg() {
+  const [clicks, setClicks] = useState(0)
+  const [showPopup, setShowPopup] = useState(false)
+  
+  const handleClick = () => {
+    setClicks(c => c + 1)
+    setShowPopup(true)
+    setTimeout(() => setShowPopup(false), 800)
+  }
+  
+  return (
+    <div className="easter-egg" onClick={handleClick} title="点我试试？">
+      <span className="egg-icon">🎮</span>
+      <span className="egg-count">{clicks}</span>
+      {showPopup && <span className="popup">+1 🔥</span>}
     </div>
   )
 }
@@ -128,7 +182,7 @@ function Nav() {
 function Stats() {
   const stats = [
     { number: '20+', label: '项目总数' },
-    { number: '6', label: '技术分类' },
+    { number: '∞', label: '代码行数' },
     { number: 'AI', label: '主攻方向' },
   ]
   
@@ -183,8 +237,8 @@ function Skills() {
               <h3>{cat.name}</h3>
             </div>
             <div className="skill-tags">
-              {cat.skills.map(skill => (
-                <span key={skill} className="skill-tag">{skill}</span>
+              {cat.skills.map((skill, i) => (
+                <span key={skill} className="skill-tag" style={{ animationDelay: `${i * 0.1}s` }}>{skill}</span>
               ))}
             </div>
           </div>
@@ -254,7 +308,7 @@ function Projects() {
     },
     {
       name: '个人作品集',
-      description: '展示个人项目和技能的 Hacker 风格作品集网站',
+      description: 'Hacker 风格作品集网站，Matrix 雨 + Glitch 特效',
       tags: ['React', 'Vite', 'CSS'],
       icon: '🌐',
       github: 'https://github.com/MXD706/portfolio',
@@ -303,28 +357,28 @@ function About() {
         <div className="terminal-window">
           <div className="terminal-header">
             <span className="terminal-dot red"></span>
-            <span className="terminal-dot yellow"></span>
+            <span class="terminal-dot yellow"></span>
             <span className="terminal-dot green"></span>
-            <span className="terminal-title">info.json</span>
+            <span className="terminal-title">whoami</span>
           </div>
           <div className="terminal-body">
             <p><span className="comment">// 基本信息</span></p>
             <p>{'{'}</p>
             <p>  <span className="property">"姓名"</span>: <span className="string">"凯文"</span>,</p>
             <p>  <span className="property">"职业"</span>: <span className="string">"全栈开发者 & AI 爱好者"</span>,</p>
-            <p>  <span className="property">"位置"</span>: <span className="string">"中国东莞"</span>,</p>
+            <p>  <span className="property">"模式"</span>: <span className="string">"🕶️ 黑客"</span>,</p>
             <p>  <span className="property">"专注"</span>: <span className="string">"AI 与自动化"</span>,</p>
             <p>  <span className="property">"语言"</span>: [<span className="string">"Python"</span>, <span className="string">"JavaScript"</span>, <span className="string">"Rust"</span>, <span className="string">"Go"</span>]</p>
             <p>{'}'}</p>
             <p></p>
             <p><span className="comment">// 当前项目</span></p>
             <p>{'{'}</p>
-            <p>  <span className="property">"AI股票分析"</span>: <span className="string">"正在开发"</span>,</p>
-            <p>  <span className="property">"自媒体内容创作"</span>: <span className="string">"进行中"</span></p>
+            <p>  <span className="property">"AI股票分析"</span>: <span className="string">"正在开发 🔬"</span>,</p>
+            <p>  <span className="property">"自媒体内容创作"</span>: <span className="string">"进行中 🎬"</span></p>
             <p>{'}'}</p>
             <p></p>
-            <p><span className="comment">// 座右铭</span></p>
-            <p><span className="string">"用代码创造未来"</span></p>
+            <p><span className="comment">// 状态</span></p>
+            <p><span className="string">"正在改变世界... 🌏"</span></p>
           </div>
         </div>
       </div>
@@ -352,9 +406,9 @@ function Contact() {
           <span className="contact-value">mxd706@example.com</span>
         </a>
         <div className="contact-card">
-          <span className="contact-icon">📍</span>
-          <span className="contact-label">位置</span>
-          <span className="contact-value">广东·东莞</span>
+          <span className="contact-icon">🎮</span>
+          <span className="contact-label">游戏</span>
+          <span className="contact-value">正在输入...</span>
         </div>
       </div>
     </section>
@@ -370,8 +424,8 @@ function Footer() {
         <span className="divider">|</span>
         <a href="#home">回到顶部</a>
       </div>
-      <p>使用 React + Vite 构建</p>
-      <p className="copyright">© 2026 凯文. 保留所有权利.</p>
+      <p>Made with 🤖 and ☕</p>
+      <p className="copyright">© 2026 凯文. All rights reserved.</p>
     </footer>
   )
 }
@@ -379,12 +433,15 @@ function Footer() {
 function App() {
   return (
     <div className="app">
+      <CustomCursor />
+      <ScrollProgress />
       <MatrixRain />
       <Nav />
+      <EasterEgg />
       
       <section id="home" className="hero">
         <GlitchText>凯文</GlitchText>
-        <TerminalText texts={['全栈开发者', 'AI 爱好者', '开源贡献者', '正在改变世界']} />
+        <TerminalText texts={['全栈开发者', 'AI 爱好者', '开源贡献者', '正在改变世界', 'Build the future']} />
         <Stats />
         <div className="cta-buttons">
           <a href="#projects" className="btn btn-primary">查看项目</a>
