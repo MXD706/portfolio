@@ -37,15 +37,58 @@ function AsciiLogo() {
   )
 }
 
-// CRT Scanlines & Effects
-function CRTOverlay() {
-  return (
-    <div className="crt-overlay">
-      <div className="scanlines"></div>
-      <div className="flicker"></div>
-      <div className="vignette"></div>
-    </div>
-  )
+// Subtle Grid Background
+function GridBackground() {
+  return <div className="grid-bg"></div>
+}
+
+// Code Rain Background
+function CodeRain() {
+  useEffect(() => {
+    const canvas = document.getElementById('coderain')
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const chars = '01アイウエオカキクケコ'.split('')
+    const fontSize = 14
+    const columns = Math.floor(canvas.width / fontSize)
+    const drops = Array(columns).fill(1)
+
+    function draw() {
+      ctx.fillStyle = 'rgba(10, 10, 15, 0.1)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      for (let i = 0; i < drops.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)]
+        ctx.fillStyle = '#39ff14'
+        ctx.font = `${fontSize}px monospace`
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize)
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0
+        }
+        drops[i]++
+      }
+    }
+
+    const interval = setInterval(draw, 80)
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  return <canvas id="coderain" className="code-rain" />
 }
 
 // Code Ocean Background
@@ -175,7 +218,7 @@ function Nav() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 100)
+      setScrolled(window.scrollY > 80)
 
       const sections = ['home', 'skills', 'projects', 'about', 'contact']
       for (const section of sections.reverse()) {
@@ -193,17 +236,17 @@ function Nav() {
   return (
     <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-logo">
-        <span className="logo">[</span>
-        凯文
-        <span className="logo">]</span>
+        <span className="bracket">[</span>
+        KEVIN
+        <span className="bracket">]</span>
       </div>
       <div className="nav-links">
         {[
-          { id: 'home', label: '首页' },
-          { id: 'skills', label: '技能' },
-          { id: 'projects', label: '项目' },
-          { id: 'about', label: '关于' },
-          { id: 'contact', label: '联系' }
+          { id: 'home', label: 'HOME' },
+          { id: 'skills', label: 'SKILLS' },
+          { id: 'projects', label: 'PROJECTS' },
+          { id: 'about', label: 'ABOUT' },
+          { id: 'contact', label: 'CONTACT' }
         ].map(item => (
           <a
             key={item.id}
@@ -214,9 +257,9 @@ function Nav() {
           </a>
         ))}
       </div>
-      <div className="nav-time">
-        <span className="time-label">运行时长</span>
-        <span className="time-value">{Math.floor(performance.now() / 1000)}秒</span>
+      <div className="nav-status">
+        <span className="status-dot"></span>
+        <span>Available</span>
       </div>
     </nav>
   )
@@ -224,27 +267,28 @@ function Nav() {
 
 // Hero Section
 function Hero() {
-  const roles = ['全栈开发者', 'AI 爱好者', '开源贡献者', '◈ 黑客精神 ◈']
+  const roles = ['Full Stack Developer', 'AI Enthusiast', 'Open Source Contributor']
   return (
     <section id="home" className="hero">
       <div className="hero-badge">
         <span className="badge-dot"></span>
-        <span>在线可用的</span>
+        <span>Available for work</span>
       </div>
-      <GlitchText tag="h1">KEVIN</GlitchText>
+      <h1>KEVIN</h1>
+      <p className="hero-subtitle">Building things with code</p>
       <TerminalText texts={roles} />
       <Stats />
       <div className="cta-buttons">
         <a href="#projects" className="btn btn-primary">
-          <span className="btn-icon">▸</span> 查看项目
+          <span className="btn-icon">→</span> View Projects
         </a>
         <a href="#contact" className="btn btn-secondary">
-          <span className="btn-icon">⌂</span> 联系我
+          <span className="btn-icon">↓</span> Get in Touch
         </a>
       </div>
       <div className="scroll-indicator">
-        <span>向下滚动</span>
-        <div className="scroll-arrow">↓</div>
+        <span>SCROLL</span>
+        <div className="scroll-line"></div>
       </div>
     </section>
   )
@@ -253,20 +297,19 @@ function Hero() {
 // Stats Counter
 function Stats() {
   const stats = [
-    { number: '20+', label: '项目数', status: '在线' },
-    { number: '∞', label: '代码行数', status: '在线' },
-    { number: 'AI', label: '专注领域', status: '在线' },
+    { number: '20', unit: '+', label: 'Projects' },
+    { number: '∞', unit: '', label: 'Lines of Code' },
+    { number: 'AI', unit: '', label: 'Focus Area' },
   ]
-  
+
   return (
     <div className="stats">
       {stats.map(s => (
         <div key={s.label} className="stat">
-          <div className="stat-header">
-            <span className="stat-indicator"></span>
-            <span className="stat-status">{s.status}</span>
+          <div className="stat-value">
+            <span className="stat-number">{s.number}</span>
+            <span className="stat-unit">{s.unit}</span>
           </div>
-          <span className="stat-number">{s.number}</span>
           <span className="stat-label">{s.label}</span>
         </div>
       ))}
@@ -278,32 +321,33 @@ function Stats() {
 function Skills() {
   const skillCategories = [
     {
-      name: 'AI / 机器学习',
-      icon: '◈',
+      name: 'AI / Machine Learning',
+      icon: '◆',
       skills: ['Python', 'TensorFlow', 'PyTorch', 'LangChain', 'OpenCV']
     },
     {
-      name: '前端开发',
-      icon: '◈',
+      name: 'Frontend',
+      icon: '◆',
       skills: ['React', 'Vue', 'TypeScript', 'Tailwind', 'Tauri']
     },
     {
-      name: '后端开发',
-      icon: '◈',
+      name: 'Backend',
+      icon: '◆',
       skills: ['Node.js', 'Go', 'Rust', 'PostgreSQL', 'Redis']
     },
     {
-      name: '开发工具',
-      icon: '◈',
+      name: 'Dev Tools',
+      icon: '◆',
       skills: ['Git', 'Linux', 'Docker', 'CI/CD', 'Shell']
     },
   ]
-  
+
   return (
     <section id="skills" className="section">
       <div className="section-header">
-        <GlitchText tag="h2">{'<技能>'}</GlitchText>
-        <p className="section-subtitle">// 系统能力</p>
+        <p className="section-label"> Expertise </p>
+        <h2>{'<Skills/>'}</h2>
+        <p className="section-subtitle">Technologies I work with</p>
       </div>
       <div className="skills-grid">
         {skillCategories.map(cat => (
@@ -314,7 +358,7 @@ function Skills() {
             </div>
             <div className="skill-tags">
               {cat.skills.map((skill, i) => (
-                <span key={skill} className="skill-tag" style={{ animationDelay: `${i * 0.15}s` }}>
+                <span key={skill} className="skill-tag" style={{ animationDelay: `${i * 0.1}s` }}>
                   {skill}
                 </span>
               ))}
@@ -333,8 +377,8 @@ function ProjectCard({ name, description, tags, icon, github, demo }) {
       <div className="card-header">
         <span className="card-icon">{icon}</span>
         <span className="card-status">
-          <span className="dot"></span> 
-          <span className="status-text">公开</span>
+          <span className="dot"></span>
+          <span className="status-text">Public</span>
         </span>
       </div>
       <h3>{name}</h3>
@@ -345,12 +389,12 @@ function ProjectCard({ name, description, tags, icon, github, demo }) {
       <div className="card-actions">
         {github && (
           <a href={github} target="_blank" rel="noopener noreferrer" className="card-link">
-            <span>⌨</span> 源码
+            <span>⌘</span> Code
           </a>
         )}
         {demo && (
           <a href={demo} target="_blank" rel="noopener noreferrer" className="card-link">
-            <span>▸</span> 在线
+            <span>→</span> Demo
           </a>
         )}
       </div>
@@ -362,44 +406,45 @@ function ProjectCard({ name, description, tags, icon, github, demo }) {
 function Projects() {
   const projects = [
     {
-      name: 'AI 股票分析系统',
-      description: 'AI驱动股票分析 + 自动交易系统，支持多市场数据',
+      name: 'AI Stock Trading System',
+      description: 'AI-powered stock analysis with automated trading, multi-market support',
       tags: ['Python', 'LangChain', 'TensorFlow'],
-      icon: '◈',
+      icon: '◆',
       github: 'https://github.com/MXD706/TradingAgents-CN',
       demo: null
     },
     {
-      name: 'OpenClaw 管理面板',
-      description: 'AI Agent 可视化管理面板，支持多渠道集成和 MCP 工具',
+      name: 'OpenClaw Dashboard',
+      description: 'AI Agent management panel with multi-channel integration and MCP tools',
       tags: ['React', 'Tauri', 'TypeScript'],
-      icon: '◈',
+      icon: '◆',
       github: 'https://github.com/MXD706/ai007-panel',
       demo: null
     },
     {
       name: 'Deep Live Cam',
-      description: '实时 AI 换脸工具，GPU 加速，虚拟摄像头输出',
+      description: 'Real-time AI face swap with GPU acceleration and virtual camera output',
       tags: ['Python', 'DeepFace', 'CUDA'],
-      icon: '◈',
+      icon: '◆',
       github: null,
       demo: null
     },
     {
-      name: '个人作品集',
-      description: '这个网站 - 黑客终端风格，CRT 特效',
+      name: 'Portfolio',
+      description: 'This website — clean developer portfolio with subtle terminal aesthetics',
       tags: ['React', 'Vite', 'CSS'],
-      icon: '◈',
+      icon: '◆',
       github: 'https://github.com/MXD706/portfolio',
       demo: 'https://mxd706.github.io/portfolio'
     },
   ]
-  
+
   return (
     <section id="projects" className="section">
       <div className="section-header">
-        <GlitchText tag="h2">{'<项目>'}</GlitchText>
-        <p className="section-subtitle">// 最近作品</p>
+        <p className="section-label">Work</p>
+        <h2>{'<Projects/>'}</h2>
+        <p className="section-subtitle">Recent projects</p>
       </div>
       <div className="projects-grid">
         {projects.map(p => <ProjectCard key={p.name} {...p} />)}
@@ -413,8 +458,9 @@ function About() {
   return (
     <section id="about" className="section">
       <div className="section-header">
-        <GlitchText tag="h2">{'<关于>'}</GlitchText>
-        <p className="section-subtitle">// 查看我的信息</p>
+        <p className="section-label">Info</p>
+        <h2>{'<About/>'}</h2>
+        <p className="section-subtitle">A bit about me</p>
       </div>
       <div className="about-content">
         <div className="terminal-window">
@@ -425,23 +471,22 @@ function About() {
             <span className="terminal-title">whoami.json</span>
           </div>
           <div className="terminal-body">
-            <p><span className="comment">{"// 身份"}</span></p>
+            <p><span className="comment">{"// identity"}</span></p>
             <p>{"{"}</p>
-            <p>  <span className="property">"名字"</span>: <span className="string">"凯文"</span>,</p>
-            <p>  <span className="property">"职业"</span>: <span className="string">"全栈开发者"</span>,</p>
-            <p>  <span className="property">"模式"</span>: <span className="string">"黑客 ◈"</span>,</p>
-            <p>  <span className="property">"专注"</span>: <span className="string">"AI & 自动化"</span>,</p>
-            <p>  <span className="property">"技术栈"</span>: [<span className="string">"Python"</span>, <span className="string">"JS"</span>, <span className="string">"Rust"</span>, <span className="string">"Go"</span>]</p>
+            <p>  <span className="property">"name"</span>: <span className="string">"Kevin"</span>,</p>
+            <p>  <span className="property">"role"</span>: <span className="string">"Full Stack Developer"</span>,</p>
+            <p>  <span className="property">"focus"</span>: <span className="string">"AI & Automation"</span>,</p>
+            <p>  <span className="property">"stack"</span>: [<span className="string">"Python"</span>, <span className="string">"JS"</span>, <span className="string">"Rust"</span>, <span className="string">"Go"</span>]</p>
             <p>{"}"}</p>
             <p></p>
-            <p><span className="comment">{"// 当前项目"}</span></p>
+            <p><span className="comment">{"// current projects"}</span></p>
             <p>{"{"}</p>
-            <p>  <span className="property">"ai_stock"</span>: <span className="string">"进行中 ◈"</span>,</p>
-            <p>  <span className="property">"content_creator"</span>: <span className="string">"活跃中 ◈"</span></p>
+            <p>  <span className="property">"ai_stock"</span>: <span className="string">"In Progress"</span>,</p>
+            <p>  <span className="property">"content_creator"</span>: <span className="string">"Active"</span></p>
             <p>{"}"}</p>
             <p></p>
-            <p><span className="comment">{"// 座右铭"}</span></p>
-            <p><span className="string">"用代码构建未来 ◈"</span></p>
+            <p><span className="comment">{"// motto"}</span></p>
+            <p><span className="string">"Building the future with code"</span></p>
           </div>
         </div>
       </div>
@@ -454,8 +499,9 @@ function Contact() {
   return (
     <section id="contact" className="section">
       <div className="section-header">
-        <GlitchText tag="h2">{'<联系>'}</GlitchText>
-        <p className="section-subtitle">// 联系我</p>
+        <p className="section-label">Reach out</p>
+        <h2>{'<Contact/>'}</h2>
+        <p className="section-subtitle">Let's connect</p>
       </div>
       <div className="contact-grid">
         <a href="https://github.com/MXD706" target="_blank" rel="noopener noreferrer" className="contact-card">
@@ -464,8 +510,8 @@ function Contact() {
           <span className="contact-value">@MXD706</span>
         </a>
         <a href="mailto:mxd706@example.com" className="contact-card">
-          <span className="contact-icon">⌂</span>
-          <span className="contact-label">邮箱</span>
+          <span className="contact-icon">✉</span>
+          <span className="contact-label">EMAIL</span>
           <span className="contact-value">mxd706@example.com</span>
         </a>
       </div>
@@ -491,9 +537,9 @@ function App() {
   return (
     <div className="app">
       <AsciiLogo />
-      <CRTOverlay />
+      <GridBackground />
+      <CodeRain />
       <ScrollProgress />
-      <CodeOcean />
       <Nav />
       <Hero />
       <Skills />
