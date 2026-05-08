@@ -48,7 +48,7 @@ function CRTOverlay() {
   )
 }
 
-// Code Ocean Background - More impressive than matrix rain
+// Code Ocean Background
 function CodeOcean() {
   useEffect(() => {
     const canvas = document.getElementById('codeocean')
@@ -58,17 +58,14 @@ function CodeOcean() {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
     
-    // Code-like characters
     const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'.split('')
     const fontSize = 16
     const columns = Math.floor(canvas.width / fontSize)
     const drops = Array(columns).fill(1)
     
-    // Colors for gradient effect
     const colors = ['#00ff41', '#00d4ff', '#ff0055', '#ffbd2e']
     
     function draw() {
-      // Semi-transparent black for trail effect
       ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       
@@ -76,7 +73,6 @@ function CodeOcean() {
         const char = chars[Math.floor(Math.random() * chars.length)]
         const colorIndex = Math.floor(Math.random() * colors.length)
         
-        // Gradient color based on position
         const gradient = ctx.createLinearGradient(0, drops[i] * fontSize - 100, 0, drops[i] * fontSize)
         gradient.addColorStop(0, colors[colorIndex])
         gradient.addColorStop(1, 'rgba(0,0,0,0)')
@@ -109,7 +105,7 @@ function CodeOcean() {
   return <canvas id="codeocean" className="code-ocean" />
 }
 
-// Scroll Progress Bar - Minimal & Stylish
+// Scroll Progress Bar
 function ScrollProgress() {
   const [progress, setProgress] = useState(0)
   
@@ -140,7 +136,7 @@ function TerminalText({ texts, speed = 80 }) {
   const [displayText, setDisplayText] = useState('')
   const [textIndex, setTextIndex] = useState(0)
   const [isDeleting, setIsDeleting] = useState(false)
-  
+
   useEffect(() => {
     const currentText = texts[textIndex]
     const timeout = setTimeout(() => {
@@ -159,10 +155,10 @@ function TerminalText({ texts, speed = 80 }) {
         }
       }
     }, isDeleting ? speed / 2 : speed)
-    
+
     return () => clearTimeout(timeout)
   }, [displayText, isDeleting, textIndex, texts, speed])
-  
+
   return (
     <div className="terminal-text">
       <span className="prompt">❯</span>
@@ -176,12 +172,11 @@ function TerminalText({ texts, speed = 80 }) {
 function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
-  
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 100)
-      
-      // Detect active section
+
       const sections = ['home', 'skills', 'projects', 'about', 'contact']
       for (const section of sections.reverse()) {
         const el = document.getElementById(section)
@@ -194,39 +189,73 @@ function Nav() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-  
+
   return (
     <nav className={`nav ${scrolled ? 'scrolled' : ''}`}>
       <div className="nav-logo">
         <span className="logo">[</span>
-        KEVIN
+        凯文
         <span className="logo">]</span>
       </div>
       <div className="nav-links">
-        {['home', 'skills', 'projects', 'about', 'contact'].map(section => (
-          <a 
-            key={section}
-            href={`#${section}`} 
-            className={`nav-link ${activeSection === section ? 'active' : ''}`}
+        {[
+          { id: 'home', label: '首页' },
+          { id: 'skills', label: '技能' },
+          { id: 'projects', label: '项目' },
+          { id: 'about', label: '关于' },
+          { id: 'contact', label: '联系' }
+        ].map(item => (
+          <a
+            key={item.id}
+            href={`#${item.id}`}
+            className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
           >
-            {section === 'home' ? '~/home' : `./${section}`}
+            {item.label}
           </a>
         ))}
       </div>
       <div className="nav-time">
-        <span className="time-label">SYS.UPTIME</span>
-        <span className="time-value">{Math.floor(performance.now() / 1000)}s</span>
+        <span className="time-label">运行时长</span>
+        <span className="time-value">{Math.floor(performance.now() / 1000)}秒</span>
       </div>
     </nav>
+  )
+}
+
+// Hero Section
+function Hero() {
+  const roles = ['全栈开发者', 'AI 爱好者', '开源贡献者', '◈ 黑客精神 ◈']
+  return (
+    <section id="home" className="hero">
+      <div className="hero-badge">
+        <span className="badge-dot"></span>
+        <span>在线可用的</span>
+      </div>
+      <GlitchText tag="h1">KEVIN</GlitchText>
+      <TerminalText texts={roles} />
+      <Stats />
+      <div className="cta-buttons">
+        <a href="#projects" className="btn btn-primary">
+          <span className="btn-icon">▸</span> 查看项目
+        </a>
+        <a href="#contact" className="btn btn-secondary">
+          <span className="btn-icon">⌂</span> 联系我
+        </a>
+      </div>
+      <div className="scroll-indicator">
+        <span>向下滚动</span>
+        <div className="scroll-arrow">↓</div>
+      </div>
+    </section>
   )
 }
 
 // Stats Counter
 function Stats() {
   const stats = [
-    { number: '20+', label: 'PROJECTS', status: 'online' },
-    { number: '∞', label: 'LINES_OF_CODE', status: 'online' },
-    { number: 'AI', label: 'FOCUS', status: 'online' },
+    { number: '20+', label: '项目数', status: '在线' },
+    { number: '∞', label: '代码行数', status: '在线' },
+    { number: 'AI', label: '专注领域', status: '在线' },
   ]
   
   return (
@@ -249,22 +278,22 @@ function Stats() {
 function Skills() {
   const skillCategories = [
     {
-      name: 'AI/ML',
+      name: 'AI / 机器学习',
       icon: '◈',
       skills: ['Python', 'TensorFlow', 'PyTorch', 'LangChain', 'OpenCV']
     },
     {
-      name: 'FRONTEND',
+      name: '前端开发',
       icon: '◈',
       skills: ['React', 'Vue', 'TypeScript', 'Tailwind', 'Tauri']
     },
     {
-      name: 'BACKEND',
+      name: '后端开发',
       icon: '◈',
       skills: ['Node.js', 'Go', 'Rust', 'PostgreSQL', 'Redis']
     },
     {
-      name: 'DEVTOOLS',
+      name: '开发工具',
       icon: '◈',
       skills: ['Git', 'Linux', 'Docker', 'CI/CD', 'Shell']
     },
@@ -273,8 +302,8 @@ function Skills() {
   return (
     <section id="skills" className="section">
       <div className="section-header">
-        <GlitchText tag="h2">&lt;SKILLS/&gt;</GlitchText>
-        <p className="section-subtitle">// system.capabilities</p>
+        <GlitchText tag="h2">{'<技能>'}</GlitchText>
+        <p className="section-subtitle">// 系统能力</p>
       </div>
       <div className="skills-grid">
         {skillCategories.map(cat => (
@@ -305,7 +334,7 @@ function ProjectCard({ name, description, tags, icon, github, demo }) {
         <span className="card-icon">{icon}</span>
         <span className="card-status">
           <span className="dot"></span> 
-          <span className="status-text">PUBLIC</span>
+          <span className="status-text">公开</span>
         </span>
       </div>
       <h3>{name}</h3>
@@ -316,12 +345,12 @@ function ProjectCard({ name, description, tags, icon, github, demo }) {
       <div className="card-actions">
         {github && (
           <a href={github} target="_blank" rel="noopener noreferrer" className="card-link">
-            <span>⌨</span> SOURCE
+            <span>⌨</span> 源码
           </a>
         )}
         {demo && (
           <a href={demo} target="_blank" rel="noopener noreferrer" className="card-link">
-            <span>▸</span> LIVE
+            <span>▸</span> 在线
           </a>
         )}
       </div>
@@ -333,16 +362,16 @@ function ProjectCard({ name, description, tags, icon, github, demo }) {
 function Projects() {
   const projects = [
     {
-      name: 'AI Trading System',
-      description: 'AI-powered stock analysis and automated trading system with multi-market data support',
+      name: 'AI 股票分析系统',
+      description: 'AI驱动股票分析 + 自动交易系统，支持多市场数据',
       tags: ['Python', 'LangChain', 'TensorFlow'],
       icon: '◈',
       github: 'https://github.com/MXD706/TradingAgents-CN',
       demo: null
     },
     {
-      name: 'OpenClaw Panel',
-      description: 'AI Agent management dashboard with multi-channel integration and MCP tools',
+      name: 'OpenClaw 管理面板',
+      description: 'AI Agent 可视化管理面板，支持多渠道集成和 MCP 工具',
       tags: ['React', 'Tauri', 'TypeScript'],
       icon: '◈',
       github: 'https://github.com/MXD706/ai007-panel',
@@ -350,15 +379,15 @@ function Projects() {
     },
     {
       name: 'Deep Live Cam',
-      description: 'Real-time AI face swap tool with GPU acceleration and virtual camera output',
+      description: '实时 AI 换脸工具，GPU 加速，虚拟摄像头输出',
       tags: ['Python', 'DeepFace', 'CUDA'],
       icon: '◈',
       github: null,
       demo: null
     },
     {
-      name: 'Portfolio',
-      description: 'This website - Hacker terminal aesthetic with CRT effects',
+      name: '个人作品集',
+      description: '这个网站 - 黑客终端风格，CRT 特效',
       tags: ['React', 'Vite', 'CSS'],
       icon: '◈',
       github: 'https://github.com/MXD706/portfolio',
@@ -369,8 +398,8 @@ function Projects() {
   return (
     <section id="projects" className="section">
       <div className="section-header">
-        <GlitchText tag="h2">&lt;PROJECTS/&gt;</GlitchText>
-        <p className="section-subtitle">// recent.work()</p>
+        <GlitchText tag="h2">{'<项目>'}</GlitchText>
+        <p className="section-subtitle">// 最近作品</p>
       </div>
       <div className="projects-grid">
         {projects.map(p => <ProjectCard key={p.name} {...p} />)}
@@ -384,8 +413,8 @@ function About() {
   return (
     <section id="about" className="section">
       <div className="section-header">
-        <GlitchText tag="h2">&lt;ABOUT/&gt;</GlitchText>
-        <p className="section-subtitle">// cat whoami.json</p>
+        <GlitchText tag="h2">{'<关于>'}</GlitchText>
+        <p className="section-subtitle">// 查看我的信息</p>
       </div>
       <div className="about-content">
         <div className="terminal-window">
@@ -396,23 +425,23 @@ function About() {
             <span className="terminal-title">whoami.json</span>
           </div>
           <div className="terminal-body">
-            <p><span className="comment">{"// identity"}</span></p>
+            <p><span className="comment">{"// 身份"}</span></p>
             <p>{"{"}</p>
-            <p>  <span className="property">"name"</span>: <span className="string">"KEVIN"</span>,</p>
-            <p>  <span className="property">"role"</span>: <span className="string">"Full-Stack Developer"</span>,</p>
-            <p>  <span className="property">"mode"</span>: <span className="string">"HACKER ◈"</span>,</p>
-            <p>  <span className="property">"focus"</span>: <span className="string">"AI & Automation"</span>,</p>
-            <p>  <span className="property">"stack"</span>: [<span className="string">"Python"</span>, <span className="string">"JS"</span>, <span className="string">"Rust"</span>, <span className="string">"Go"</span>]</p>
+            <p>  <span className="property">"名字"</span>: <span className="string">"凯文"</span>,</p>
+            <p>  <span className="property">"职业"</span>: <span className="string">"全栈开发者"</span>,</p>
+            <p>  <span className="property">"模式"</span>: <span className="string">"黑客 ◈"</span>,</p>
+            <p>  <span className="property">"专注"</span>: <span className="string">"AI & 自动化"</span>,</p>
+            <p>  <span className="property">"技术栈"</span>: [<span className="string">"Python"</span>, <span className="string">"JS"</span>, <span className="string">"Rust"</span>, <span className="string">"Go"</span>]</p>
             <p>{"}"}</p>
             <p></p>
-            <p><span className="comment">{"// current_projects"}</span></p>
+            <p><span className="comment">{"// 当前项目"}</span></p>
             <p>{"{"}</p>
-            <p>  <span className="property">"ai_stock"</span>: <span className="string">"in progress ◈"</span>,</p>
-            <p>  <span className="property">"content_creator"</span>: <span className="string">"active ◈"</span></p>
+            <p>  <span className="property">"ai_stock"</span>: <span className="string">"进行中 ◈"</span>,</p>
+            <p>  <span className="property">"content_creator"</span>: <span className="string">"活跃中 ◈"</span></p>
             <p>{"}"}</p>
             <p></p>
-            <p><span className="comment">{"// motto"}</span></p>
-            <p><span className="string">"Build the future with code ◈"</span></p>
+            <p><span className="comment">{"// 座右铭"}</span></p>
+            <p><span className="string">"用代码构建未来 ◈"</span></p>
           </div>
         </div>
       </div>
@@ -425,8 +454,8 @@ function Contact() {
   return (
     <section id="contact" className="section">
       <div className="section-header">
-        <GlitchText tag="h2">&lt;CONTACT/&gt;</GlitchText>
-        <p className="section-subtitle">// get_in_touch()</p>
+        <GlitchText tag="h2">{'<联系>'}</GlitchText>
+        <p className="section-subtitle">// 联系我</p>
       </div>
       <div className="contact-grid">
         <a href="https://github.com/MXD706" target="_blank" rel="noopener noreferrer" className="contact-card">
@@ -436,7 +465,7 @@ function Contact() {
         </a>
         <a href="mailto:mxd706@example.com" className="contact-card">
           <span className="contact-icon">⌂</span>
-          <span className="contact-label">EMAIL</span>
+          <span className="contact-label">邮箱</span>
           <span className="contact-value">mxd706@example.com</span>
         </a>
       </div>
@@ -466,21 +495,7 @@ function App() {
       <ScrollProgress />
       <CodeOcean />
       <Nav />
-      
-      <section id="home" className="hero">
-        <GlitchText>KEVIN</GlitchText>
-        <TerminalText texts={['Full-Stack Developer', 'AI Enthusiast', 'Open Source', 'Build The Future', '◈ HACK THE PLANET ◈']} />
-        <Stats />
-        <div className="cta-buttons">
-          <a href="#projects" className="btn btn-primary">
-            <span className="btn-icon">▸</span> VIEW PROJECTS
-          </a>
-          <a href="#contact" className="btn btn-secondary">
-            <span className="btn-icon">⌂</span> CONTACT
-          </a>
-        </div>
-      </section>
-      
+      <Hero />
       <Skills />
       <Projects />
       <About />
